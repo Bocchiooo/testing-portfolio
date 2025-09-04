@@ -45,5 +45,5 @@ jobs:
         run: |
           # 运行test开头的文件（你的测试文件，比如test_api.py）
           # -v参数：显示详细测试结果（哪些用例通过/失败）
-          pytest test_api_01.py -v
+          pytest projects/api_tests/test_api_01.py -v
         # 作用：执行你的测试函数，验证代码是否符合预期
