@@ -43,7 +43,14 @@ jobs:
       # 步骤4：执行测试函数
       - name: 运行测试
         run: |
+          mkdir -p results
           # 运行test开头的文件（你的测试文件，比如test_api.py）
           # -v参数：显示详细测试结果（哪些用例通过/失败）
-          pytest projects/api_tests/test_api_01.py -v
+          pytest projects/api_tests/test_api_01.py -v  --maxfail=1 --junitxml=results/report.xml
+
         # 作用：执行你的测试函数，验证代码是否符合预期
+      - name: 上传报告
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: results/report.xml  # 报告路径不变，和上一步生成路径对应
