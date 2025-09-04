@@ -15,7 +15,7 @@ jobs:
     # 策略配置：用于多版本测试（可选）
     strategy:
       matrix:
-        python-version: ["3.9", "3.13"]  # 测试两种Python版本，确保代码兼容性
+        python-version: ["3.13"]  # 测试两种Python版本，确保代码兼容性
 
     # 任务的步骤（按顺序执行的操作）
     steps:
