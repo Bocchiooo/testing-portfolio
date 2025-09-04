@@ -1,0 +1,49 @@
+name: 运行JSONPlaceholder接口测试
+
+# 定义触发工作流的事件（当这些事件发生时，自动执行工作流）
+on:
+  push:
+    branches: [ "main" ]  # 当代码推送到main分支时触发
+  pull_request:
+    branches: [ "main" ]  # 当有人向main分支提交PR（拉取请求）时触发
+
+# 定义工作流中的任务（jobs），一个工作流可以包含多个任务
+jobs:
+  test:  # 任务名称，可自定义（这里表示"测试"任务）
+    runs-on: ubuntu-latest  # 指定运行环境：最新版Ubuntu系统（GitHub提供的免费虚拟机）
+
+    # 策略配置：用于多版本测试（可选）
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.13"]  # 测试两种Python版本，确保代码兼容性
+
+    # 任务的步骤（按顺序执行的操作）
+    steps:
+      # 步骤1：拉取仓库代码到运行环境中
+      - name: 拉取仓库代码  # 步骤名称（显示在日志中）
+        uses: actions/checkout@v4  # 使用GitHub官方提供的"拉取代码"动作（v4是版本号）
+        # 作用：将当前仓库的代码下载到Ubuntu虚拟机中，后续步骤才能操作代码
+
+      # 步骤2：设置指定版本的Python环境
+      - name: 设置Python环境
+        uses: actions/setup-python@v5  # 使用官方"设置Python"动作
+        with:
+          # 从上面matrix中获取Python版本，循环测试3.9和3.10
+          python-version: ${{ matrix.python-version }}
+        # 作用：在虚拟机中安装并激活指定版本的Python，确保测试环境正确
+
+      # 步骤3：安装测试所需的依赖库
+      - name: 安装依赖（pytest和requests）
+        run: |  # 执行一系列Linux命令
+          python -m pip install --upgrade pip  # 升级pip（Python包管理工具）到最新版
+          pip install pytest  # 安装pytest测试框架（运行测试必需）
+          pip install requests  # 安装requests库（你的测试函数中用了requests.get）
+        # 作用：确保测试环境中包含所有代码运行所需的库
+
+      # 步骤4：执行测试函数
+      - name: 运行测试
+        run: |
+          # 运行test开头的文件（你的测试文件，比如test_api.py）
+          # -v参数：显示详细测试结果（哪些用例通过/失败）
+          pytest test_api_01.py -v
+        # 作用：执行你的测试函数，验证代码是否符合预期
